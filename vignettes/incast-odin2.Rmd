@@ -1,0 +1,250 @@
+---
+title: "Forecasting with odin2 models"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Forecasting with odin2 models}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE,
+  message = FALSE,
+  warning = FALSE,
+  fig.width = 8,
+  fig.height = 5
+)
+```
+
+## Overview
+
+This vignette shows how to use an SIR model written with `odin2` to produce an
+`incast` forecast.
+
+`odin2` describes the dynamical model. We use it to write the SIR equations and
+the comparison between modelled incidence and observed data. It does not fit
+the model.
+
+`dust2` runs the odin2 model for a given set of parameters. It compares the
+model output with the observations and calculates the likelihood: how well
+those parameters explain the data.
+
+`monty` performs the inference. It combines the likelihood from `dust2` with the
+prior and uses Markov chain Monte Carlo (MCMC) to draw parameter values from
+the posterior.
+
+
+`incast.odin` connects these pieces to the `incast` pipeline.
+
+A custom `incast.odin::ODIN2()` model requires two inputs:
+
+1. the model from `odin2::odin()`;
+2. the prior from `monty::monty_dsl()`.
+
+You do not need to write `dust2` or MCMC code. The current interface uses a deterministic epidemic trajectory. Forecast uncertainty comes from posterior parameter draws and the observation model.
+
+## Example: one New York influenza wave
+
+This example uses New York influenza hospital admissions from the 2024–25
+season. The `as_of` filter recreates the data available on 23 February 2025;
+later revisions and future observations are excluded.
+
+```{r packages-data}
+library(incast)
+library(incast.odin)
+library(odin2)
+library(monty)
+library(dplyr)
+
+snapshot <- as.Date("2025-02-23")
+
+ny_flu <- example_data |>
+  filter(
+    location == "NY",
+    target_end_date >= as.Date("2024-10-19"),
+    as_of <= snapshot
+  )
+```
+
+A closed SIR model should not be fitted across several influenza seasons because it contains no seasonal forcing, importation or replenishment of susceptible people.
+
+## Model structure
+
+The SIR model contains three compartments and two flows:
+
+| Symbol | Meaning |
+|---|---|
+| `S` | Susceptible people |
+| `I` | Infectious people |
+| `R` | Recovered people |
+| `infections` | Flow from `S` to `I` |
+| `recoveries` | Flow from `I` to `R` |
+
+`incidence` accumulates new infections during one reporting interval. Because
+the input data are weekly, one model-time unit is one week. The default
+`dt = 0.25` divides each week into four model updates.
+
+```{r generator}
+sir <- odin2::odin({
+  initial(S) <- N - I0
+  initial(I) <- I0
+  initial(R) <- 0
+  initial(incidence, zero_every = 1) <- 0
+
+  update(S) <- S - infections
+  update(I) <- I + infections - recoveries
+  update(R) <- R + recoveries
+  update(incidence) <- incidence + infections
+
+  infection_probability <- 1 - exp(-beta * max(I, 0) / N * dt)
+  recovery_probability <- 1 - exp(-gamma * dt)
+  infections <- max(S, 0) * infection_probability
+  recoveries <- max(I, 0) * recovery_probability
+
+  beta <- parameter()
+  gamma <- parameter()
+  N <- parameter()
+  I0 <- parameter()
+  rho <- parameter()
+  phi <- parameter()
+
+  cases <- data()
+  cases ~ NegativeBinomial(
+    size = phi,
+    mu = rho * incidence + 1e-6
+  )
+})
+```
+
+The final two statements tell `dust2` how to evaluate observed hospital
+admissions against the latent infections:
+
+- `cases <- data()` reads the observed counts;
+- `cases ~ NegativeBinomial(...)` defines their likelihood.
+
+## Parameters and prior
+
+| Parameter | Meaning |
+|---|---|
+| `beta` | Weekly transmission rate |
+| `gamma` | Weekly recovery rate |
+| `I0` | Infectious people at the start of the window |
+| `rho` | Probability that an infection appears in the observed hospital target |
+| `phi` | Negative binomial overdispersion |
+| `N` | Population, fixed here at 19.5 million |
+
+Parameters named in the monty prior are estimated. Fixed parameters are
+passed separately. These priors are working assumptions for this example and
+should be reviewed for a real analysis.
+
+```{r prior}
+prior <- monty::monty_dsl({
+  beta ~ LogNormal(meanlog = log(2.5), sdlog = 0.3)
+  gamma ~ LogNormal(meanlog = log(1.75), sdlog = 0.25)
+  rho ~ Beta(a = 2, b = 398)
+  I0 ~ LogNormal(meanlog = log(1000), sdlog = 0.8)
+  phi ~ Exponential(mean = 30)
+})
+
+fixed <- list(N = 19.5e6)
+```
+
+## Create the incast model
+
+`ODIN2()` combines the generator, prior and fixed parameters into a model that
+`incast` can fit and forecast.
+
+```{r adapter}
+set.seed(1)
+
+sir_model <- ODIN2(
+  observation,
+  generator = sir,
+  prior = prior,
+  fixed = fixed,
+  observation_model = odin_negbin(size = "phi", scale = "rho"),
+  n_steps = 5000,
+  n_draws = 500
+)
+```
+
+`n_steps` controls the parameter sampling. `n_draws` is the number of
+posterior trajectories retained for forecasting.
+
+There are two negative binomial statements because they serve different
+directions of the workflow:
+
+| Statement | Purpose |
+|---|---|
+| `cases ~ NegativeBinomial(...)` inside odin2 | Score historical observations while fitting |
+| `odin_negbin()` passed to `ODIN2()` | Simulate future observations after projecting incidence |
+
+They must describe the same observation process.
+
+The adapter requires only two naming conventions in the odin2 model:
+
+- observed counts are named `cases`;
+- the scalar forecast state is named `incidence`.
+
+## Compare and forecast with incast
+
+Once created, `sir_model` behaves like the models returned by
+`default_models()`. `get_cv()` refits it at every forecast origin.
+`get_fcast()` then refits the selected model to all available observations and
+projects it into the forecast period.
+
+```{r pipeline}
+models <- c(
+  default_models(),
+  list(SIR = sir_model)
+)
+
+ncast <- ny_flu |>
+  check_data() |>
+  get_ncast(max_delay = 2, draws = 200)
+
+cv <- ncast |>
+  get_cv(
+    h = 2,
+    n_origins = 4,
+    step = 1,
+    models = models
+  )
+
+cv$score
+autoplot(cv)
+
+fcast <- cv |>
+  get_fcast(top_n = 1)
+
+autoplot(fcast)
+```
+
+## Built-in SIR shortcut
+
+The package includes the same SIR generator already compiled:
+
+```{r shortcut}
+sir_model <- odin_sir(
+  observation,
+  population = 19.5e6,
+  prior = prior,
+  n_steps = 5000,
+  n_draws = 500
+)
+```
+
+Use `odin_sir()` to start from the supplied equations. Use `ODIN2()` when
+changing the model, likelihood or future observation process. The downstream
+`incast` pipeline is identical.
+
+## Further reading
+
+- `vignette("odin2", package = "odin2")` introduces the modelling language.
+- `vignette("fitting", package = "odin2")` develops the dust2 and monty fitting
+  workflow in detail.
+- The [odin2 documentation](https://mrc-ide.github.io/odin2/) covers model
+  syntax, fitting and packaging.

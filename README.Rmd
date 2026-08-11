@@ -1,3 +1,11 @@
+---
+output: github_document
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
 # incast.odin
 
 `incast.odin` lets an [odin2](https://mrc-ide.github.io/odin2/) transmission
@@ -8,7 +16,7 @@ model behave like any other forecasting model in
 
 The ready-to-use SIR model follows the ordinary `incast` pipeline:
 
-```r
+```{r}
 library(incast)
 library(incast.odin)
 
@@ -69,10 +77,6 @@ The complete workflow has four steps:
 3. Connect them with `ODIN2()`.
 4. Put the result in the usual `models` list.
 
-For the complete model, a prior suited to the example data, the full
-`ncast |> cv |> fcast` pipeline and an explanation of each line, read
-`vignette("incast-odin2")`.
-
 ## Three conventions
 
 A model passed to `ODIN2()` is deliberately simple and well defined:
@@ -99,15 +103,6 @@ install.packages(
 
 The built-in SIR and SEIR models are precompiled. The `odin2` package and a
 compiler are needed only when writing a new model.
-
-## Development
-
-After editing a model in `inst/odin/`, regenerate its compiled sources with:
-
-```r
-Rscript data-raw/generate.R
-devtools::document()
-```
 
 ## Licence
 

@@ -1,0 +1,13 @@
+url: https://accidda.github.io/incast.odin/
+template:
+  bootstrap: 5
+
+reference:
+- title: Models
+  contents:
+  - ODIN2
+  - odin_sir
+  - odin_seir
+- title: Observation models
+  contents:
+  - odin_negbin

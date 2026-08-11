@@ -87,14 +87,7 @@ per week; for daily input, rates are per day.
 ## Installation
 
 ```r
-install.packages(
-  "incast.odin",
-  repos = c(
-    "https://accidda.r-universe.dev",
-    "https://mrc-ide.r-universe.dev",
-    "https://cloud.r-project.org"
-  )
-)
+pak::pak("ACCIDDA/incast.odin")
 ```
 
 The built-in SIR and SEIR models are precompiled. The `odin2` package and a

@@ -3,7 +3,7 @@ seir <- structure(
   function() get("seir"),
   class = "dust_system_generator",
   name = "seir",
-  package = "incast.odin",
+  package = "insight.cast.odin",
   path = NULL,
   parameters = data.frame(
     name = c("beta", "sigma", "gamma", "N", "E0", "I0", "rho", "phi"),
@@ -20,7 +20,7 @@ sir <- structure(
   function() get("sir"),
   class = "dust_system_generator",
   name = "sir",
-  package = "incast.odin",
+  package = "insight.cast.odin",
   path = NULL,
   parameters = data.frame(
     name = c("beta", "gamma", "N", "I0", "rho", "phi"),

@@ -13,3 +13,5 @@
 vignettes/*.html
 vignettes/*.pdf
 docs/
+*.Rproj
+.Rproj

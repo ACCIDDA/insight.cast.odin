@@ -2,7 +2,7 @@
 % Please edit documentation in R/odin.R
 \name{ODIN2}
 \alias{ODIN2}
-\title{Use an odin2 model with incast}
+\title{Use an odin2 model with insight.cast}
 \usage{
 ODIN2(
   formula,
@@ -40,12 +40,12 @@ model. Use \code{\link[=odin_negbin]{odin_negbin()}} or \code{\link[=odin_poisso
 example, \code{0.25} gives four model updates per interval.}
 }
 \value{
-A fable model definition for \code{incast} or \code{fabletools}.
+A fable model definition for \code{insight.cast} or \code{fabletools}.
 }
 \description{
 \code{ODIN2()} connects a discrete-time \code{\link[odin2:odin]{odin2::odin()}} model to the ordinary
-fable interface used by \code{\link[incast:get_cv]{incast::get_cv()}} and
-\code{\link[incast:get_fcast]{incast::get_fcast()}}. The model is fitted with dust2 and monty,
+fable interface used by \code{\link[insight.cast:get_cv]{insight.cast::get_cv()}} and
+\code{\link[insight.cast:get_fcast]{insight.cast::get_fcast()}}. The model is fitted with dust2 and monty,
 then projected from its fitted final state.
 }
 \details{
@@ -58,7 +58,7 @@ The odin2 model follows three conventions:
 
 The model must also contain a likelihood such as
 \code{cases ~ Poisson(incidence + 1e-6)}. See
-\code{vignette("incast-odin2")} for a complete SIR example.
+\code{vignette("insight.cast-odin2")} for a complete SIR example.
 
 \code{ODIN2()} uses dust2's deterministic likelihood and deterministic projection.
 Forecast uncertainty comes from posterior parameter draws and
@@ -67,7 +67,7 @@ initial interface.
 }
 \examples{
 \dontshow{if (FALSE) withAutoprint(\{ # examplesIf}
-library(incast)
+library(insight.cast)
 
 model <- ODIN2(
   observation,
@@ -85,5 +85,5 @@ check_data(example_data) |>
 \dontshow{\}) # examplesIf}
 }
 \seealso{
-\code{\link[=odin_sir]{odin_sir()}}, \code{vignette("incast-odin2")}
+\code{\link[=odin_sir]{odin_sir()}}, \code{vignette("insight.cast-odin2")}
 }

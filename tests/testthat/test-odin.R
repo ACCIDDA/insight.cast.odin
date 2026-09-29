@@ -42,7 +42,7 @@ test_that("forecast paths are non-negative count draws", {
 })
 
 
-test_that("fable fits each incast series independently", {
+test_that("fable fits each insight.cast series independently", {
   fit <- fabletools::model(
     make_model_ts(c("NY", "CT"), n = 25L),
     SIR = odin_sir(
@@ -153,13 +153,13 @@ test_that("a custom odin2 SIR model uses the same adapter", {
 })
 
 
-test_that("the model runs through incast", {
-  skip_if_not_installed("incast")
+test_that("the model runs through insight.cast", {
+  skip_if_not_installed("insight.cast")
   data <- dplyr::as_tibble(make_model_ts("NY", n = 25L))
   data$target <- "cases"
 
-  forecast <- incast::check_data(data) |>
-    incast::get_fcast(
+  forecast <- insight.cast::check_data(data) |>
+    insight.cast::get_fcast(
       models = list(
         SIR = odin_sir(
           observation,
@@ -170,16 +170,16 @@ test_that("the model runs through incast", {
       h = 2L
     )
 
-  expect_s3_class(forecast, "incast_fcast")
+  expect_s3_class(forecast, "insightcast_fcast")
   expect_contains(unique(forecast$hub$model_out_tbl$model_id), "SIR")
 })
 
 
-test_that("the model runs through the complete incast pipeline", {
-  skip_if_not_installed("incast")
+test_that("the model runs through the complete insight.cast pipeline", {
+  skip_if_not_installed("insight.cast")
   set.seed(1)
 
-  data <- incast::example_data |>
+  data <- insight.cast::example_data |>
     dplyr::filter(
       location == "NY",
       target_end_date >= as.Date("2024-10-19"),
@@ -196,12 +196,12 @@ test_that("the model runs through the complete incast pipeline", {
   )
 
   forecast <- data |>
-    incast::check_data() |>
-    incast::get_ncast(max_delay = 2L, draws = 50L) |>
-    incast::get_cv(h = 2L, n_origins = 2L, step = 1L, models = models) |>
-    incast::get_fcast(top_n = 1L)
+    insight.cast::check_data() |>
+    insight.cast::get_ncast(max_delay = 2L, draws = 50L) |>
+    insight.cast::get_cv(h = 2L, n_origins = 2L, step = 1L, models = models) |>
+    insight.cast::get_fcast(top_n = 1L)
 
-  expect_s3_class(forecast, "incast_fcast")
+  expect_s3_class(forecast, "insightcast_fcast")
   expect_contains(unique(forecast$hub$model_out_tbl$model_id), "SIR")
 })
 

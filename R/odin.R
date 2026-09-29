@@ -1,8 +1,8 @@
-#' Use an odin2 model with incast
+#' Use an odin2 model with insight.cast
 #'
 #' `ODIN2()` connects a discrete-time [odin2::odin()] model to the ordinary
-#' fable interface used by [incast::get_cv()] and
-#' [incast::get_fcast()]. The model is fitted with dust2 and monty,
+#' fable interface used by [insight.cast::get_cv()] and
+#' [insight.cast::get_fcast()]. The model is fitted with dust2 and monty,
 #' then projected from its fitted final state.
 #'
 #' The odin2 model follows three conventions:
@@ -13,7 +13,7 @@
 #'
 #' The model must also contain a likelihood such as
 #' `cases ~ Poisson(incidence + 1e-6)`. See
-#' `vignette("incast-odin2")` for a complete SIR example.
+#' `vignette("insight.cast-odin2")` for a complete SIR example.
 #'
 #' `ODIN2()` uses dust2's deterministic likelihood and deterministic projection.
 #' Forecast uncertainty comes from posterior parameter draws and
@@ -36,10 +36,10 @@
 #' @param dt Simulation step as a fraction of one reporting interval. For
 #'   example, `0.25` gives four model updates per interval.
 #'
-#' @return A fable model definition for `incast` or `fabletools`.
+#' @return A fable model definition for `insight.cast` or `fabletools`.
 #'
 #' @examplesIf FALSE
-#' library(incast)
+#' library(insight.cast)
 #'
 #' model <- ODIN2(
 #'   observation,
@@ -55,7 +55,7 @@
 #' check_data(example_data) |>
 #'   get_fcast(models = list(SIR = model))
 #'
-#' @seealso [odin_sir()], `vignette("incast-odin2")`
+#' @seealso [odin_sir()], `vignette("insight.cast-odin2")`
 #' @export
 #' @importFrom fabletools new_model_definition
 ODIN2 <- function(

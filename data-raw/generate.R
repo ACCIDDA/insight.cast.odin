@@ -32,7 +32,7 @@ stopifnot(length(files) > 0L)
 generated <- lapply(
   file.path("inst/dust", files),
   dust2:::package_generate,
-  "incast.odin",
+  "insight.cast.odin",
   environment()
 )
 

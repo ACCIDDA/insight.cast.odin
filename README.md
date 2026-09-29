@@ -1,16 +1,16 @@
-# incast.odin
+# insight.cast.odin
 
-`incast.odin` lets an [odin2](https://mrc-ide.github.io/odin2/) transmission
+`insight.cast.odin` lets an [odin2](https://mrc-ide.github.io/odin2/) transmission
 model behave like any other forecasting model in
-[incast](https://github.com/ACCIDDA/incast).
+[insight.cast](https://github.com/ACCIDDA/insight.cast).
 
 ## Quick start
 
-The ready-to-use SIR model follows the ordinary `incast` pipeline:
+The ready-to-use SIR model follows the ordinary `insight.cast` pipeline:
 
 ```r
-library(incast)
-library(incast.odin)
+library(insight.cast)
+library(insight.cast.odin)
 
 models <- list(
   SIR = odin_sir(observation, population = 19.5e6)
@@ -47,10 +47,10 @@ No one package performs the whole job:
 | `odin2` | describes the dynamical model and its comparison with data |
 | `dust2` | runs the odin2 model and calculates its likelihood |
 | `monty` | combines the likelihood with a prior and samples from the posterior |
-| `incast` | cross-validates, scores, ensembles and formats the forecast |
+| `insight.cast` | cross-validates, scores, ensembles and formats the forecast |
 
-`incast.odin::ODIN2()` is the small adapter between these pieces. It returns a
-normal `fable` model definition, so `incast` needs no special odin2 workflow.
+`insight.cast.odin::ODIN2()` is the small adapter between these pieces. It returns a
+normal `fable` model definition, so `insight.cast` needs no special odin2 workflow.
 
 Users write custom models with `odin2` and priors with `monty`. `ODIN2()` calls
 the required dust2 and MCMC code internally.
@@ -71,7 +71,7 @@ The complete workflow has four steps:
 
 For the complete model, a prior suited to the example data, the full
 `ncast |> cv |> fcast` pipeline and an explanation of each line, read
-`vignette("incast-odin2")`.
+`vignette("insight.cast-odin2")`.
 
 ## Three conventions
 
@@ -87,7 +87,7 @@ per week; for daily input, rates are per day.
 ## Installation
 
 ```r
-pak::pak("ACCIDDA/incast.odin")
+pak::pak("ACCIDDA/insight.cast.odin")
 ```
 
 The built-in SIR and SEIR models are precompiled. The `odin2` package and a

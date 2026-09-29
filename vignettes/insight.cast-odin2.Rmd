@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 ## Overview
 
 This vignette shows how to use an SIR model written with `odin2` to produce an
-`incast` forecast.
+`insight.cast` forecast.
 
 `odin2` describes the dynamical model. We use it to write the SIR equations and
 the comparison between modelled incidence and observed data. It does not fit
@@ -37,9 +37,9 @@ prior and uses Markov chain Monte Carlo (MCMC) to draw parameter values from
 the posterior.
 
 
-`incast.odin` connects these pieces to the `incast` pipeline.
+`insight.cast.odin` connects these pieces to the `insight.cast` pipeline.
 
-A custom `incast.odin::ODIN2()` model requires two inputs:
+A custom `insight.cast.odin::ODIN2()` model requires two inputs:
 
 1. the model from `odin2::odin()`;
 2. the prior from `monty::monty_dsl()`.
@@ -53,8 +53,8 @@ season. The `as_of` filter recreates the data available on 23 February 2025;
 later revisions and future observations are excluded.
 
 ```{r packages-data}
-library(incast)
-library(incast.odin)
+library(insight.cast)
+library(insight.cast.odin)
 library(odin2)
 library(monty)
 library(dplyr)
@@ -152,10 +152,10 @@ prior <- monty::monty_dsl({
 fixed <- list(N = 19.5e6)
 ```
 
-## Create the incast model
+## Create the insight.cast model
 
 `ODIN2()` combines the generator, prior and fixed parameters into a model that
-`incast` can fit and forecast.
+`insight.cast` can fit and forecast.
 
 ```{r adapter}
 set.seed(1)
@@ -189,7 +189,7 @@ The adapter requires only two naming conventions in the odin2 model:
 - observed counts are named `cases`;
 - the scalar forecast state is named `incidence`.
 
-## Compare and forecast with incast
+## Compare and forecast with insight.cast
 
 Once created, `sir_model` behaves like the models returned by
 `default_models()`. `get_cv()` refits it at every forecast origin.
@@ -239,7 +239,7 @@ sir_model <- odin_sir(
 
 Use `odin_sir()` to start from the supplied equations. Use `ODIN2()` when
 changing the model, likelihood or future observation process. The downstream
-`incast` pipeline is identical.
+`insight.cast` pipeline is identical.
 
 ## Further reading
 

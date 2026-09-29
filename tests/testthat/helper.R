@@ -26,7 +26,7 @@ make_epidemic <- function(
 }
 
 
-#' A keyed modelling tsibble, as incast's `as_model_ts()` would build it
+#' A keyed modelling tsibble, as insight.cast's `as_model_ts()` would build it
 make_model_ts <- function(locations = "NY", n = 30L, ...) {
   df <- do.call(
     rbind,

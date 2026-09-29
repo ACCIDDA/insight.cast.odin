@@ -1,8 +1,8 @@
-#' incast.odin: use odin2 models with incast
+#' insight.cast.odin: use odin2 models with insight.cast
 #'
 #' The main functions are [odin_sir()] for the ready-to-use model and [ODIN2()]
 #' for a model written by the user.
 #'
 #' @keywords internal
-#' @useDynLib incast.odin, .registration = TRUE
+#' @useDynLib insight.cast.odin, .registration = TRUE
 "_PACKAGE"

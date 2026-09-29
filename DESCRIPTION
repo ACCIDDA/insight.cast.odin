@@ -1,13 +1,13 @@
-Package: incast.odin
-Title: Use Odin2 Models with Incast Forecasts
+Package: insight.cast.odin
+Title: Use Odin2 Models with insight.cast Forecasts
 Version: 0.0.1
 Date: 2026-08-10
 Authors@R: c(
     person("Cyril", "Geismar", , "cgeisma1@jh.edu", role = c("aut", "cre")),
     person("Insight Net", role = c("cph", "fnd")))
 Description: Connects compartmental transmission models written with 'odin2'
-    to the 'fable' interface used by 'incast'. Models can therefore be fitted,
-    cross-validated, ensembled and exported through the ordinary 'incast'
+    to the 'fable' interface used by 'insight.cast'. Models can therefore be fitted,
+    cross-validated, ensembled and exported through the ordinary 'insight.cast'
     workflow. Ready-to-use SIR and SEIR models are included.
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -22,7 +22,7 @@ Imports:
     tsibble,
     distributional
 Suggests:
-    incast,
+    insight.cast,
     odin2 (>= 0.3.46),
     fable,
     dplyr,
@@ -37,6 +37,6 @@ LinkingTo:
 SystemRequirements: C++17
 Additional_repositories: https://accidda.r-universe.dev, https://mrc-ide.r-universe.dev
 VignetteBuilder: knitr
-URL: https://github.com/ACCIDDA/incast.odin, https://accidda.github.io/incast.odin/
-BugReports: https://github.com/ACCIDDA/incast.odin/issues
+URL: https://github.com/ACCIDDA/insight.cast.odin, https://accidda.github.io/insight.cast.odin/
+BugReports: https://github.com/ACCIDDA/insight.cast.odin/issues
 Config/testthat/edition: 3

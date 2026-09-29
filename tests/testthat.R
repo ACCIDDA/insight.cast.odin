@@ -1,4 +1,4 @@
 library(testthat)
-library(incast.odin)
+library(insight.cast.odin)
 
-test_check("incast.odin")
+test_check("insight.cast.odin")

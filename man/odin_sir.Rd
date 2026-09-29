@@ -24,7 +24,7 @@ A fable model definition.
 }
 \description{
 \code{odin_sir()} is the shortest way to add a mechanistic model to an
-incast forecast. It uses a precompiled susceptible-infectious-recovered
+insight.cast forecast. It uses a precompiled susceptible-infectious-recovered
 model with a negative binomial observation model.
 }
 \details{
@@ -34,7 +34,7 @@ are measured per reporting interval.
 }
 \examples{
 \dontshow{if (FALSE) withAutoprint(\{ # examplesIf}
-library(incast)
+library(insight.cast)
 
 models <- c(
   default_models(),

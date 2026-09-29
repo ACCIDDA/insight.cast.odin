@@ -1,7 +1,7 @@
 #' Ready-to-use SIR model
 #'
 #' `odin_sir()` is the shortest way to add a mechanistic model to an
-#' incast forecast. It uses a precompiled susceptible-infectious-recovered
+#' insight.cast forecast. It uses a precompiled susceptible-infectious-recovered
 #' model with a negative binomial observation model.
 #'
 #' The model estimates transmission (`beta`), recovery (`gamma`), reporting
@@ -20,7 +20,7 @@
 #' @return A fable model definition.
 #'
 #' @examplesIf FALSE
-#' library(incast)
+#' library(insight.cast)
 #'
 #' models <- c(
 #'   default_models(),

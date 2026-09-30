@@ -13,15 +13,19 @@ export(odin_poisson)
 export(odin_seir)
 export(odin_sir)
 importFrom(distributional,dist_sample)
-importFrom(fabletools,forecast)
-importFrom(fabletools,glance)
-importFrom(fabletools,model_sum)
-importFrom(fabletools,new_model_definition)
-importFrom(fabletools,report)
-importFrom(fabletools,tidy)
-importFrom(stats,fitted)
-importFrom(stats,residuals)
-importFrom(stats,rnbinom)
-importFrom(stats,rpois)
+importFrom(fabletools,
+  forecast,
+  glance,
+  model_sum,
+  new_model_definition,
+  report,
+  tidy
+)
+importFrom(stats,
+  fitted,
+  residuals,
+  rnbinom,
+  rpois
+)
 importFrom(tsibble,measured_vars)
 useDynLib(insight.cast.odin, .registration = TRUE)
